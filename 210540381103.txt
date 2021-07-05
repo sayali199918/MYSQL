@@ -1,0 +1,140 @@
+Name-Sayali _Badgujar_103_KH
+
+create database mysql_EXam;
+
+use mysql_Exam;
+								Section I
+
+create table DEPT
+(
+DEPTNO	int,
+DNAME varchar(15),
+LOC	varchar(10)
+);
+
+insert into  DEPT (DEPTNO,DNAME,LOC) 
+VALUES(10,'ACCOUNTING','NEW YORK'),(20,'RESEARCH','DALLAS'),(30,'SALES'	,'CHICAGO'),(40,'OPERATIONS','BOSTON');
+
+SELECT * FROM DEPT;
+
+CREATE TABLE EMP
+(
+EMPNO	int,
+ENAME	varchar(10),
+JOB		varchar(9),
+HIREDATE date,
+SAL		float,
+COMM	float,
+DEPTNO	int
+);
+
+INSERT INTO EMP (EMPNO,ENAME,JOB,HIREDATE,SAL,COMM,DEPTNO) 
+VALUES (7839,'KING',	'MANAGER',	'1991-11-17',5000,	NULL,10),
+(7698,'BLAKE','CLERK','1981-05-01',	2850,	NULL,	30),
+(7782	,'CLARK',	'MANAGER',	'1981-06-09',	2450,	NULL,	10),
+(7566	,'JONES',	'CLERK',	'1981-04-02',	2975,	NULL, 20),
+(7654,	'MARTIN',	'SALESMAN',	'1981-09-28',1250,	1400,	30),
+(7499,'ALLEN'	,'SALESMAN',	'1981-02-20',	1600,	300,	30);
+
+SELECT * FROM EMP;
+
+# Write SELECT statements to achieve the following:-
+
+#3.Display the average SAL for all the employees whose job is CLERK.
+
+	select avg(SAL) from EMP where job='CLERK';
+
+#4.Display the rows where ENAME begins with the letter ‘A’.
+
+	select ENAME from EMP where ENAME like 'A%';
+
+#5.If all employees not receiving a commission are entitled for $300, find the net earnings (sal+comm) of each employee.
+
+	select ENAME,(SAL+COMM) from EMP where sal != 300;
+
+#6.Display the names of all employees with the initial letter only in capital.
+
+	select upper(substring(ENAME,1,1)) from EMP;
+
+#7.Find the total number of CLERKs joined after ’01-Jan-81’.
+
+	select count(ENAME) as NO_OF_CLERKS from EMP where HIREDATE>'1981-01-01' and job='CLERK';
+
+#8.Find the names of all employees whose name ends with the letter ‘M’.
+
+	select ENAME from EMP where ENAME like '%M';
+
+#9.Display the position at which the string ‘AR’ occurs in the ename.
+
+	select ENAME,INSTR(ENAME,'AR') from EMP  where INSTR(ENAME,'AR')>0;
+
+#10.Display the HRA for each employee given that HRA is 20% of SAL.
+
+	select ENAME,(0.2*SAL) as HRA from EMP;
+
+
+							Section II		
+
+/*1.Write a stored procedure by the name of NUM_100 to tell whether the product of two numbers is less than, equal to or greater than 100.  The two numbers are to be passed to the stored procedure as parameters.  The stored procedure should insert the appropriate message into a suitable TEMPP output table. Calling program for the stored procedure need not be written.*/
+
+create table temp
+(
+first float,
+second char(25)
+);
+
+
+delimiter //
+create procedure Num_100(a float,b float)
+begin
+declare p float;
+set p=a*b;
+
+if p < 100 then
+insert into temp values (p,'product less than 100');
+elseif p=100 then
+insert into temp values (p,'product is equal to 100');
+elseif p > 100 then
+insert into temp values (p,'product greater than  100');
+end if;
+end ; //
+delimiter ;
+
+call Num_100(50,20);
+call Num_100(50,2);
+call Num_100(50,1);
+
+select * from temp;
+
+
+
+/*2.Create a stored function by the name of F2C to convert a temperature in Fahrenheit (F) to its equivalent in Celsius (C). The temperature in Fahrenheit is to be passed to the stored function as a parameter.  The stored function should return the temperature in Celsius.  The required formula is:- 
+C= (F-32)*5/9
+Calling program for the stored function need not be written.*/
+
+create table temp
+(
+first float,
+second char(25)
+);
+
+delimiter //
+create function F2C(F float)
+returns float
+deterministic
+begin
+return ((F-32)*5/9);
+end; //
+delimiter ;
+
+delimiter //
+create procedure callingf(x float)
+begin
+declare y float;
+set y= F2C(x);
+insert into temp values (y,'F2C');
+end; //
+delimiter ;
+
+call callingf(106);
+select* from temp;
